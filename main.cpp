@@ -378,8 +378,8 @@ void dolg(Group* curr) {
     // сортировка пузырьком вектора значений "процент должников" 
     // параллельно значения в индексном массиве тоже переставляются
     // по итогу значения в индексном массиве соответствуют порядку групп по убыванию процента должников
-    for (i = 1; i < pers_dolg.size(); ++i) {
-        for (j = 0; j < pers_dolg.size() - i; ++j) {
+    for (i = 0; i + 1 < pers_dolg.size(); ++i) {
+        for (j = 0; j + 1< pers_dolg.size() - i; ++j) {
             if (pers_dolg[j] < pers_dolg[j + 1]) {
                 swap(pers_dolg[j], pers_dolg[j + 1]);
                 swap(index[j], index[j + 1]);
