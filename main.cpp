@@ -324,8 +324,8 @@ void without_twos(Group* tmp) {
     // сортировка пузырьком вектора средних баллов 
     // параллельно значения в индексном массиве тоже переставляются
     // по итогу значения в индексном массиве соответствуют индексам групп по убыванию среднего балла
-    for (i = 1; i < sr_ball.size(); ++i) {
-        for (j = 0; j < sr_ball.size() - i; ++j) {
+    for (i = 0; i + 1 < sr_ball.size(); ++i) {
+        for (j = 0; j + 1 < sr_ball.size() - i; ++j) {
             if (sr_ball[j] < sr_ball[j + 1]) {
                 swap(sr_ball[j], sr_ball[j + 1]);
                 swap(index[j], index[j + 1]);
