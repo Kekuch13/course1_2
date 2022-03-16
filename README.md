@@ -44,38 +44,36 @@
 void without_twos(Group* tmp) {
     bool log;
     int i, j;
-    float sred, sum, kol;
+    float sred, sum, kol; // kol - кол-во студентов в группе
     vector<float> sr_ball; // вектор для среднего балла в подходящих группах  
     vector<int> groups; // вектор для номеров подходящих групп
 
-    while (tmp != nullptr) { // обходим все группы
-        // запоминаем указатель на первого студента в группе
-        // т.к. в процессе перебора студентов он будет изменяться
+    while (tmp != nullptr) {
         Student* ptr = tmp->student;
 
         kol = 0;
         log = true;
         sum = 0;
-        while (tmp->student != nullptr) { // смотрим всех студентов в группе            
+        while (tmp->student != nullptr) { 
             for (i = 0; i < 5; ++i) {
-                if (tmp->student->marks[i] <= 2) break; // если встретилась двойка, то выходим из цикла             
-                sum += tmp->student->marks[i]; // считаем сумму оценок студента
+                if (tmp->student->marks[i] <= 2) break;            
+                sum += tmp->student->marks[i]; 
             }
-            kol++; // считаем количество студентов
-            if (i < 5) { // если встретилась двойка (цикл for не доработал до конца)
+            kol++; 
+            if (i < 5) { 
                 log = false;
                 break;                
             }
-            tmp->student = tmp->student->next; // переходим к следующему студенту
+            tmp->student = tmp->student->next; 
         }
-        if (log) { // если в группе нет двоечников
-            sred = sum / (5 * kol); // считаем средний балл
-            sr_ball.push_back(sred); //добавляем в вектор средних баллов посчитаный ранее балл
-            groups.push_back(tmp->number); // добавляем группу в вектор групп
+        if (log) {
+            sred = sum / (5 * kol);
+            sr_ball.push_back(sred);
+            groups.push_back(tmp->number);
             // получилось, что номер группы и её средний балл имеют одинаковый индекс в векторах
         }
-        tmp->student = ptr; // восстанавливаем указатель на первого студента в группе
-        tmp = tmp->next; // переходим к следующей группе
+        tmp->student = ptr;
+        tmp = tmp->next; 
     }
 
     if (sr_ball.empty()) {
@@ -111,13 +109,11 @@ void without_twos(Group* tmp) {
 ```c++
 void dolg(Group* curr) {
     int i, j;
-    float dolg, kol;
+    float dolg, kol; // kol - кол-во студентов в группе, dolg - кл-во должников
     vector<float> pers_dolg; // вектор для значений "процент должников"
     vector<int> groups; // вектор для номеров групп 
 
     while (curr != nullptr) {
-        // запоминаем указатель на первого студента в группе
-        // т.к. в процессе перебора студентов он будет изменяться
         Student* ptr = curr->student;
 
         kol = 0;
@@ -126,16 +122,16 @@ void dolg(Group* curr) {
             for (i = 0; i < 5; ++i) {
                 if (curr->student->marks[i] <= 2) break;
             }
-            kol++; // считаем кол-во студентов в группе
-            if (i < 5) dolg++; // если у студента есть двойка или меньше (т.е. цикл for не доработал до конца), то записывем студента в должники
-            curr->student = curr->student->next; // переходим к следующему студенту
+            kol++;
+            if (i < 5) dolg++;
+            curr->student = curr->student->next;
         }   
-        groups.push_back(curr->number); // добавляем группу в вектор групп
-        pers_dolg.push_back(100 * dolg / kol); // добавляем в вектор "процент должников" для данной группы
+        groups.push_back(curr->number); 
+        pers_dolg.push_back(100 * dolg / kol); 
         // получилось, что номер группы и её "процент должников" имеют одинаковый индекс в векторах
 
-        curr->student = ptr; // восстанавливаем указатель на первого студента в группе
-        curr = curr->next; // переходим к следующей группе
+        curr->student = ptr;
+        curr = curr->next;
     }
 
     // создаем массив индексов
