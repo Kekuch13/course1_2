@@ -49,8 +49,7 @@ void without_twos(Group* tmp) {
     bool log;
     int i, j;
     float sred, sum, kol; // kol - кол-во студентов в группе
-    vector<float> sr_ball; // вектор для среднего балла в подходящих группах  
-    vector<int> groups; // вектор для номеров подходящих групп
+    vector<pair<float, int>> groups; // пары: средний балл -- группа
 
     while (tmp != nullptr) {
         Student* ptr = tmp->student;
@@ -58,53 +57,34 @@ void without_twos(Group* tmp) {
         kol = 0;
         log = true;
         sum = 0;
-        while (tmp->student != nullptr) { 
+        while (tmp->student != nullptr) {
             for (i = 0; i < 5; ++i) {
-                if (tmp->student->marks[i] <= 2) break;            
-                sum += tmp->student->marks[i]; 
+                if (tmp->student->marks[i] <= 2) break;
+                sum += tmp->student->marks[i];
             }
-            kol++; 
-            if (i < 5) { 
+            kol++;
+            if (i < 5) {
                 log = false;
-                break;                
+                break;
             }
-            tmp->student = tmp->student->next; 
+            tmp->student = tmp->student->next;
         }
         if (log) {
             sred = sum / (5 * kol);
-            sr_ball.push_back(sred);
-            groups.push_back(tmp->number);
-            // получилось, что номер группы и её средний балл имеют одинаковый индекс в векторах
+            groups.push_back({sred,tmp->number});
         }
         tmp->student = ptr;
-        tmp = tmp->next; 
+        tmp = tmp->next;
     }
 
-    if (sr_ball.empty()) {
+    if (groups.empty()) {
         cout << "\nТаких групп нет\n";
         return;
     }
-    
-    // создаем массив индексов
-    vector<int> index(groups.size()); 
-    for (i = 0; i < groups.size(); ++i) index[i] = i;
 
-    // сортировка пузырьком вектора средних баллов 
-    // параллельно значения в индексном массиве тоже переставляются
-    // по итогу значения в индексном массиве соответствуют индексам групп по убыванию среднего балла
-    for (i = 0; i + 1 < sr_ball.size(); ++i) {
-        for (j = 0; j + 1 < sr_ball.size() - i; ++j) {
-            if (sr_ball[j] < sr_ball[j + 1]) {
-                swap(sr_ball[j], sr_ball[j + 1]);
-                swap(index[j], index[j + 1]);
-            }
-        }
-    }
-
-    // выводим подходящие группы и значение среднего балла
-    cout << "\nГруппа -- средний балл:\n";
-    for (i = 0; i < index.size(); ++i) {
-        cout << " " << groups[index[i]] << " -- " << sr_ball[i] << endl;
+    sort(groups.begin(), groups.end(), greater<pair<float, int>>());
+    for(auto x : groups) {
+        cout << " " << x.second << " -- " << x.first << endl;
     }
 }
 ```
@@ -114,8 +94,7 @@ void without_twos(Group* tmp) {
 void dolg(Group* curr) {
     int i, j;
     float dolg, kol; // kol - кол-во студентов в группе, dolg - кл-во должников
-    vector<float> pers_dolg; // вектор для значений "процент должников"
-    vector<int> groups; // вектор для номеров групп 
+    vector<pair<float, int>> groups;
 
     while (curr != nullptr) {
         Student* ptr = curr->student;
@@ -129,35 +108,21 @@ void dolg(Group* curr) {
             kol++;
             if (i < 5) dolg++;
             curr->student = curr->student->next;
-        }   
-        groups.push_back(curr->number); 
-        pers_dolg.push_back(100 * dolg / kol); 
-        // получилось, что номер группы и её "процент должников" имеют одинаковый индекс в векторах
+        }
+        groups.push_back({100 * dolg / kol, curr->number});
 
         curr->student = ptr;
         curr = curr->next;
     }
 
-    // создаем массив индексов
-    vector<int> index(groups.size());
-    for (i = 0; i < groups.size(); ++i) index[i] = i;
-
-    // сортировка пузырьком вектора значений "процент должников" 
-    // параллельно значения в индексном массиве тоже переставляются
-    // по итогу значения в индексном массиве соответствуют порядку групп по убыванию процента должников
-    for (i = 0; i + 1< pers_dolg.size(); ++i) {
-        for (j = 0; j + 1 < pers_dolg.size() - i; ++j) {
-            if (pers_dolg[j] < pers_dolg[j + 1]) {
-                swap(pers_dolg[j], pers_dolg[j + 1]);
-                swap(index[j], index[j + 1]);
-            }
-        }
+    if (groups.empty()) {
+        cout << "\nТаких групп нет\n";
+        return;
     }
 
-    // выводим подходящие группы и значение "процент должников"
-    cout << "\nГруппа -- процент должников:\n";
-    for (i = 0; i < index.size(); ++i) {
-        cout << " " << groups[index[i]] << " -- " << pers_dolg[i] << "%" << endl;
+    sort(groups.begin(), groups.end(), greater<pair<float, int>>());
+    for(auto x : groups) {
+        cout << " " << x.second << " -- " << x.first << endl;
     }
 }
 ```
