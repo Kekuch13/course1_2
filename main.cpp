@@ -2,6 +2,8 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <utility>
+#include <algorithm>
 using namespace std;
 
 struct Student {
@@ -255,8 +257,7 @@ void without_twos(Group* tmp) {
     bool log;
     int i, j;
     float sred, sum, kol; // kol - кол-во студентов в группе
-    vector<float> sr_ball; // вектор для среднего балла в подходящих группах
-    vector<int> groups; // вектор для номеров подходящих групп
+    vector<pair<float, int>> groups; // пары: средний балл -- группа
 
     while (tmp != nullptr) {
         Student* ptr = tmp->student;
@@ -278,39 +279,20 @@ void without_twos(Group* tmp) {
         }
         if (log) {
             sred = sum / (5 * kol);
-            sr_ball.push_back(sred);
-            groups.push_back(tmp->number);
-            // получилось, что номер группы и её средний балл имеют одинаковый индекс в векторах
+            groups.push_back({sred,tmp->number});
         }
         tmp->student = ptr;
         tmp = tmp->next;
     }
 
-    if (sr_ball.empty()) {
+    if (groups.empty()) {
         cout << "\nТаких групп нет\n";
         return;
     }
 
-    // создаем массив индексов
-    vector<int> index(groups.size());
-    for (i = 0; i < groups.size(); ++i) index[i] = i;
-
-    // сортировка пузырьком вектора средних баллов
-    // параллельно значения в индексном массиве тоже переставляются
-    // по итогу значения в индексном массиве соответствуют индексам групп по убыванию среднего балла
-    for (i = 0; i + 1 < sr_ball.size(); ++i) {
-        for (j = 0; j + 1 < sr_ball.size() - i; ++j) {
-            if (sr_ball[j] < sr_ball[j + 1]) {
-                swap(sr_ball[j], sr_ball[j + 1]);
-                swap(index[j], index[j + 1]);
-            }
-        }
-    }
-
-    // выводим подходящие группы и значение среднего балла
-    cout << "\nГруппа -- средний балл:\n";
-    for (i = 0; i < index.size(); ++i) {
-        cout << " " << groups[index[i]] << " -- " << sr_ball[i] << endl;
+    sort(groups.begin(), groups.end(), greater<pair<float, int>>());
+    for(auto x : groups) {
+        cout << " " << x.second << " -- " << x.first << endl;
     }
 }
 
