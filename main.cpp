@@ -299,8 +299,7 @@ void without_twos(Group* tmp) {
 void dolg(Group* curr) {
     int i, j;
     float dolg, kol; // kol - кол-во студентов в группе, dolg - кл-во должников
-    vector<float> pers_dolg; // вектор для значений "процент должников"
-    vector<int> groups; // вектор для номеров групп
+    vector<pair<float, int>> groups;
 
     while (curr != nullptr) {
         Student* ptr = curr->student;
@@ -315,34 +314,20 @@ void dolg(Group* curr) {
             if (i < 5) dolg++;
             curr->student = curr->student->next;
         }
-        groups.push_back(curr->number);
-        pers_dolg.push_back(100 * dolg / kol);
-        // получилось, что номер группы и её "процент должников" имеют одинаковый индекс в векторах
+        groups.push_back({100 * dolg / kol, curr->number});
 
         curr->student = ptr;
         curr = curr->next;
     }
 
-    // создаем массив индексов
-    vector<int> index(groups.size());
-    for (i = 0; i < groups.size(); ++i) index[i] = i;
-
-    // сортировка пузырьком вектора значений "процент должников"
-    // параллельно значения в индексном массиве тоже переставляются
-    // по итогу значения в индексном массиве соответствуют порядку групп по убыванию процента должников
-    for (i = 0; i + 1< pers_dolg.size(); ++i) {
-        for (j = 0; j + 1 < pers_dolg.size() - i; ++j) {
-            if (pers_dolg[j] < pers_dolg[j + 1]) {
-                swap(pers_dolg[j], pers_dolg[j + 1]);
-                swap(index[j], index[j + 1]);
-            }
-        }
+    if (groups.empty()) {
+        cout << "\nТаких групп нет\n";
+        return;
     }
 
-    // выводим подходящие группы и значение "процент должников"
-    cout << "\nГруппа -- процент должников:\n";
-    for (i = 0; i < index.size(); ++i) {
-        cout << " " << groups[index[i]] << " -- " << pers_dolg[i] << "%" << endl;
+    sort(groups.begin(), groups.end(), greater<pair<float, int>>());
+    for(auto x : groups) {
+        cout << " " << x.second << " -- " << x.first << endl;
     }
 }
 
